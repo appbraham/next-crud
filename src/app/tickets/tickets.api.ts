@@ -4,21 +4,37 @@ import { Ticket, TicketForm } from "@/types/ticket.interface";
 
 const URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const getTickets = async (): Promise<{ tickets: Ticket[] }> => {
-    
-    try {
+export const getTickets = async ({
+    page,
+    limit,
+    status
+}: {
+    page: number,
+    limit: number,
+    status: string
+}): Promise<{
+    tickets: Ticket[],
+    totalPages: number
+}> => {
 
-        const response = await fetch(`${URL}/tickets`);
+    try {
+        let url = `${URL}/tickets?page=${page}&limit=${limit}`;
+
+        if(status) {
+            url += `&status=${status}`;
+        }
+
+        const response = await fetch(url);
         const data = await response.json();
         return data;
 
-    } catch(error: any) {
-        throw new Error(error);        
+    } catch (error: any) {
+        throw new Error(error);
     }
 }
 
-export const createTicket = async (ticket: TicketForm):Promise<{message: string}> => {
-    
+export const createTicket = async (ticket: TicketForm): Promise<{ message: string }> => {
+
     try {
 
         const response = await fetch(`${URL}/tickets`, {
@@ -31,7 +47,7 @@ export const createTicket = async (ticket: TicketForm):Promise<{message: string}
 
         const data = await response.json()
 
-        if(!response.ok) throw new Error(data.error);
+        if (!response.ok) throw new Error(data.error);
 
         return data;
 
@@ -41,38 +57,38 @@ export const createTicket = async (ticket: TicketForm):Promise<{message: string}
     }
 }
 
-export const deleteTicket = async (id: string): Promise<{message: string}> => {
-    try{
-        const response = await fetch(`${URL}/tickets/${id}`,{
+export const deleteTicket = async (id: string): Promise<{ message: string }> => {
+    try {
+        const response = await fetch(`${URL}/tickets/${id}`, {
             method: 'DELETE',
         });
 
         const data = await response.json();
 
-        if(!response.ok) throw new Error(data.error);
+        if (!response.ok) throw new Error(data.error);
 
         return data;
 
-    } catch(error: any) {
+    } catch (error: any) {
         throw new Error(error)
     }
 }
 
 export const getTicket = async (id: string): Promise<{ ticket: Ticket }> => {
-    
+
     try {
 
         const response = await fetch(`${URL}/tickets/${id}`);
         const data = await response.json();
         return data;
 
-    } catch(error: any) {
-        throw new Error(error);        
+    } catch (error: any) {
+        throw new Error(error);
     }
 }
 
-export const updateTicket = async (id: string, ticket: TicketForm):Promise<{message: string}> => {
-    
+export const updateTicket = async (id: string, ticket: TicketForm): Promise<{ message: string }> => {
+
     try {
 
         const response = await fetch(`${URL}/tickets/${id}`, {
@@ -85,7 +101,7 @@ export const updateTicket = async (id: string, ticket: TicketForm):Promise<{mess
 
         const data = await response.json()
 
-        if(!response.ok) throw new Error(data.error);
+        if (!response.ok) throw new Error(data.error);
 
         return data;
 

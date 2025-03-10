@@ -3,10 +3,25 @@ import { LucidePlusCircle } from "lucide-react";
 import TicketCard from '../../components/ticket-card';
 import { getTickets } from "./tickets.api";
 import Link from "next/link";
+import { TicketPagination } from "@/components/ticket-pagination";
+import { TicketFilter } from "@/components/ticket-filter";
 
-export default async function TicketPage() {
+interface Params {
+    searchParams?: Promise<{
+        page: number;
+        limit: number;
+        status: string;
+    }>;
+}
 
-    const { tickets } = await getTickets();
+
+export default async function TicketPage({ searchParams }: Params) {
+
+    const page = Number((await searchParams)?.page || 1);
+    const limit = Number((await searchParams)?.limit || 3);
+    const status = (await searchParams)?.status || '';
+
+    const { tickets, totalPages } = await getTickets({ page, limit, status });
 
     return (
         <div className="max-w-screen-lg mx-auto p-8">
@@ -20,13 +35,22 @@ export default async function TicketPage() {
                 </Button>
             </header>
 
+            <div>
+                <TicketFilter status={status} />
+            </div>
+
             <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                { 
-                    tickets.map((ticket) => (
-                        <TicketCard key={ticket.id} ticket={ ticket }/>
+                {
+                    tickets.length > 0 ? tickets.map((ticket) => (
+                        <TicketCard key={ticket.id} ticket={ticket} />
                     ))
+                    : "No found ticked"
                 }
             </div>
-        </div>    
+
+            <div>
+                <TicketPagination currentPage={page} limit={limit} totalPages={totalPages} />
+            </div>
+        </div>
     );
 }
