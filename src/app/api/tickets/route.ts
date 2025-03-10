@@ -22,14 +22,14 @@ export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
 
-        const {title, description, assignedTo, status} = ticketSchema.parse(body)
+        const {title, description, status, assignedTo} = ticketSchema.parse(body)
 
         await prisma.ticket.create({
             data: {
                 title,
                 description,
+                status,
                 assignedTo,
-                status
             }
         })
 

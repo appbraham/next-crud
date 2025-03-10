@@ -33,12 +33,12 @@ export async function PUT(request: NextRequest, { params }: Params) {
 
         const {title, description, assignedTo, status} = ticketSchema.parse(body)
 
-        const ticket = await prisma.ticket.update({
+        await prisma.ticket.update({
             data: {title, description, assignedTo, status},
             where: { id }
         })
 
-        return NextResponse.json({ ticket })
+        return NextResponse.json({ message: "Ticket updated successfully" })
 
     } catch(error: any) {
         return NextResponse.json({error: error.message}, {status: 500})
